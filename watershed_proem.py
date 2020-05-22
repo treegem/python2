@@ -18,8 +18,8 @@ class AutomatedNvFinder:
     def determine_nvs_and_plot(self):
 
         self.__plot_original()
-        self.__plot_all_watershed_areas(self.watershed)
-        self.__plot_camera_contour()
+        self.__plot_all_watershed_areas()
+        self.__save_and_plot_camera_contour()
 
         nv_areas = self.__determine_round_and_clean_nv_areas()
 
@@ -33,14 +33,16 @@ class AutomatedNvFinder:
         pylab.savefig("original.jpg", dpi=500)
         pylab.clf()
 
-    @staticmethod
-    def __plot_all_watershed_areas(ws):
-        pylab.imshow(ws)
+    def __plot_all_watershed_areas(self):
+        numpy.savetxt('all_ws.txt', self.watershed)
+        pylab.imshow(self.watershed)
         pylab.savefig('all_ws.png')
         pylab.clf()
 
-    def __plot_camera_contour(self):
-        pylab.imshow(scipy.ndimage.gaussian_filter(self.__smooth_frame(), self.blur_radius), cmap=pylab.cm.gray)
+    def __save_and_plot_camera_contour(self):
+        smoothed_frame = scipy.ndimage.gaussian_filter(self.__smooth_frame(), self.blur_radius)
+        numpy.savetxt('smoothed_frame.txt', smoothed_frame)
+        pylab.imshow(smoothed_frame, cmap=pylab.cm.gray)
         pylab.hold(True)
         pylab.contour(self.watershed, levels=numpy.arange(self.watershed.max()))
         pylab.savefig("camera_contour.png", dpi=500)
