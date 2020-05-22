@@ -113,10 +113,10 @@ pattern recognition and image analysis.
 - `to_uint8()`     : Convert an image to an uint8 image.
 
 """
-from __future__ import division
-from pymorph_version import __version__, __version_info__
+# from __future__ import division
 
-import sys, os
+import os
+import sys
 
 mydir = os.path.dirname(__file__)
 try:
@@ -439,8 +439,7 @@ def cdist(f, g=None, Bc=None, metric=None):
         distance image in uint16, or, if metric=='euclidean2', in int32
     """
     from string import lower
-    import numpy
-    from numpy import zeros, sqrt
+    from numpy import sqrt
     if Bc is None: Bc = secross()
     if metric is not None:
         metric = lower(metric)
@@ -566,7 +565,7 @@ def randomcolor(X):
     y : 3d-array of uint8 of shape (h, w, 3)
         Colour image.
     """
-    from numpy import take, reshape, shape, dstack
+    from numpy import take, reshape, dstack
     from numpy.random import rand
 
     mmin = X.min()
@@ -600,7 +599,7 @@ def isolines(X, N=10):
     -------
     Y : Gray-scale (uint8 or uint16) or binary image.
     """
-    from numpy import newaxis, ravel, ceil, zeros, ones, transpose, repeat, concatenate, arange, reshape, floor
+    from numpy import newaxis, ceil, zeros, ones, transpose, repeat, concatenate, arange, reshape, floor
 
     def apply_lut(img, lut):
         h, w = img.shape
@@ -1147,14 +1146,14 @@ def blob(f, measurement, output="image"):
     y : Gray-scale (uint8 or uint16) or binary image.
     """
     import numpy
-    from numpy import newaxis, ravel, zeros, sum, nonzero, array, asanyarray
+    from numpy import newaxis, zeros, sum, nonzero, asanyarray
     from string import lower
 
     measurement = lower(measurement)
     output = lower(output)
     if len(f.shape) == 1: f = f[newaxis, :]
     assert measurement in (
-    'area', 'centroid', 'boundingbox'), 'pymorph.blob: Unknown measurement type \'%s\'' % measurement
+        'area', 'centroid', 'boundingbox'), 'pymorph.blob: Unknown measurement type \'%s\'' % measurement
     if output == 'data':
         y = []
     elif measurement == 'centroid':
@@ -1508,7 +1507,7 @@ def cwatershed(f, markers, Bc=None, return_lines=False, is_gvoronoi=False):
     --------
     mahotas.cwatershed : implementation of same interface in C++
     """
-    from numpy import ones, zeros, nonzero, array, put, take, argmin, transpose, compress, concatenate, where, uint8
+    from numpy import ones, zeros, where, uint8
     from heapq import heapify, heappush, heappop
     if Bc is None: Bc = secross()
     if isbinary(markers):
@@ -1655,7 +1654,7 @@ def drawv(f, data, value, geometry):
             lines=drawv(intersec(f,0),transpose(pc),to_uint8(1),'line')
             show(f,lines)
     """
-    from numpy import array, newaxis, zeros, put, ravel, arange, floor, int32, zeros_like
+    from numpy import array, newaxis, zeros_like
     from string import lower
     import itertools
 
@@ -1925,7 +1924,7 @@ def grain(f, labels, measurement, option="image"):
             show(f)
             show(g)
     """
-    from numpy import zeros_like, asarray, zeros, float32
+    from numpy import asarray, zeros, float32
     from string import lower
 
     measurement = lower(measurement)
@@ -1984,7 +1983,6 @@ def gray(f, dtype="uint8", k=None):
     -------
     y : Unsigned gray-scale (uint8 or uint16), signed (int32) or binary image.
     """
-    from numpy import array
     if k is None: k = maxleveltype(dtype)
     if type(f) is list: f = binary(f)
     assert isbinary(f), 'f must be binary'
@@ -2444,8 +2442,6 @@ def intershow(Iab):
         . 0 .
         0 0 0
     """
-    from numpy import array, product, reshape, choose
-    from string import join
 
     assert (type(Iab) is tuple) and (len(Iab) == 2), 'pymorph.intershow: not proper format of hit-or-miss template'
     A, B = Iab
@@ -2497,7 +2493,6 @@ def asbinary(f):
     -------
       fbin : binary image
     """
-    import numpy
     if isbinary(f): return f
     assert ((f == 0) | (f == 1)).sum() == f.size, 'pymorph.asbinary: f has values that are not 0 or 1.'
     return (f != 0)
@@ -2584,7 +2579,6 @@ def labelflat(f, Bc=None, lambda_=0):
             show(f)
             lblshow(g)
     """
-    from numpy import allclose, ravel, nonzero, array
     import numpy as np
     if Bc is None: Bc = secross()
     assert not lambda_, 'pymorph.labelflat: only lambda_==0 is supported.'
@@ -3197,7 +3191,7 @@ def sedisk(r=3, dim=2, metric="euclidean", flat=True, h=0):
     B : Structuring Element
     """
     from string import lower
-    from numpy import resize, transpose, arange
+    from numpy import resize
     from numpy import sqrt, arange, transpose, maximum
 
     metric = lower(metric)
@@ -3300,8 +3294,7 @@ def seline(length=3, theta=0):
                [0, 0, 1]], dtype=uint8)
 
     """
-    import numpy
-    from numpy import pi, tan, cos, sin, sign, floor, arange, transpose, array, ones
+    from numpy import pi, tan, cos, sin, sign, floor, arange, array
 
     theta = pi * theta / 180.
     if abs(tan(theta)) <= 1:
@@ -3336,7 +3329,7 @@ def serot(b, theta=45, direction="clockwise"):
     brot : structuring element
     """
     from string import lower
-    from numpy import array, transpose, concatenate
+    from numpy import array, transpose
     from numpy import cos, sin, pi
 
     direction = lower(direction)
@@ -3498,10 +3491,10 @@ def sedilate(B1, B2):
     -------
     Bo: Structuring Element
     """
-    from numpy import newaxis, array, int32
+    from numpy import newaxis, int32
 
     assert (isbinary(B1) or (B1.dtype == int32)) and (
-                isbinary(B2) or B2.dtype == int32), 'pymorph.sedilate: s.e. must be binary or int32'
+            isbinary(B2) or B2.dtype == int32), 'pymorph.sedilate: s.e. must be binary or int32'
     if len(B1.shape) == 1: B1 = B1[newaxis, :]
     if len(B2.shape) == 1: B2 = B2[newaxis, :]
     if B1.dtype == int32 or B2.dtype == int32:
@@ -3725,7 +3718,6 @@ def skiz(f, Bc=None, return_lines=False, metric=None):
             y = skiz(f,sebox(),'LINES','EUCLIDEAN')
             show(f,y)
     """
-    from string import upper
     if Bc is None: Bc = secross()
     d = dist(neg(f), Bc, metric)
     return cwatershed(d, f, Bc, return_lines)
@@ -4187,7 +4179,6 @@ def watershed(f, Bc=None, return_lines=False):
     W : labeled image
     Wl : separation lines
     """
-    from string import upper
     if Bc is None: Bc = secross()
     return cwatershed(f, regmin(f, Bc), Bc, return_lines=return_lines)
 
@@ -4468,7 +4459,7 @@ def set2mat(A):
         [0,1,0]
         [0,0,1]
     """
-    from numpy import put, ones, ravel, shape, newaxis, array, asarray, max, int32
+    from numpy import put, ones, newaxis, array, asarray, int32
     import numpy as np
 
     if len(A) == 2:
@@ -4513,8 +4504,7 @@ def pad4n(f, Bc, value, scale=1):
         Bc = seshow(Bc)
     Bh, Bw = Bc.shape
     assert Bh % 2 and Bw % 2, 'structuring element must be odd sized'
-    ch, cw = scale * Bh / 2, scale * Bw / 2
+    ch, cw = int(scale * Bh / 2), int(scale * Bw / 2)
     g = value * ones(f.shape + scale * (array(Bc.shape) - 1))
     g[ch: -ch, cw: -cw] = f
     return g.astype(f.dtype)
-
