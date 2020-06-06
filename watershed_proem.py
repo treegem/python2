@@ -17,7 +17,7 @@ class AutomatedNvFinder:
 
     def determine_nvs_and_plot(self):
 
-        self.__plot_original()
+        self.__save_and_plot_original()
         self.__plot_all_watershed_areas()
         self.__save_and_plot_camera_contour()
 
@@ -28,7 +28,8 @@ class AutomatedNvFinder:
         self.__save_and_plot_watershed_areas_of_suitable_nvs()
         self.__save_and_plot_roi()
 
-    def __plot_original(self):
+    def __save_and_plot_original(self):
+        numpy.savetxt('original.txt', self.frame)
         pylab.imshow(self.frame)
         pylab.savefig("original.jpg", dpi=500)
         pylab.clf()
